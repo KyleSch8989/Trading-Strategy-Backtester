@@ -3,6 +3,9 @@
 #include <fstream>
 #include <vector>
 #include <sstream>
+#include <algorithm>
+
+#include "strategies.h"
 using namespace std;
 
 std::vector<float> parseData(string priceData) {
@@ -21,13 +24,13 @@ std::vector<float> parseData(string priceData) {
             while (std::getline(ss, token, ':')) {
                 ++fieldIndex;
 
-                // Check if the current field is the 2nd or 5th field
+                
                 if (fieldIndex == 2 || fieldIndex == 5) {
                     try {
-                        // Convert the string to a float and add to the vector
+                        
                         formattedPrices.push_back(std::stof(token));
                     } catch (const std::invalid_argument& e) {
-                        std::cerr << "Error: Invalid float value in field " << fieldIndex << ": " << token << '\n';
+                        std::cerr << "Error: Invalid float value in field " << fieldIndex << ": " << token << endl;
                     }
                 }
             }
@@ -47,9 +50,8 @@ int main(int argc, char** argv) {
     string priceData = argv[1];
 
     vector<float> prices = parseData(priceData);
-    for (auto price : prices) {
-        cout << price << endl;
-    }
-    
+    std::reverse(prices.begin(), prices.end());
+    std::vector<float> smaSignal = SMA(10000.0, 25, 200, prices);
+    cout << "SMA Signal (Buy/Sell): "<< (smaSignal[0] ? "Buy, " : "Sell, ") << "Days Since Start: " << smaSignal[1] << ", Quantity of Stock: " << smaSignal[2] << endl; 
     return 0;
 }
