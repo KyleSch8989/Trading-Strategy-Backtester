@@ -2,6 +2,7 @@
 #define STRATEGIES_H
 
 #include <vector>
-std::vector<float> SMA (float capital, int movingAvgShort, int movingAvgLong, std::vector<float> prices);
+
+std::vector<float> SMA (int thread_id, float capital, int movingAvgShort, int movingAvgLong, const std::vector<float>& prices);
 
 #endif
