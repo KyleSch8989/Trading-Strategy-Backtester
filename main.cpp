@@ -69,6 +69,7 @@ std::vector<float> callStockAPI(std::string stockSymbol, std::string tickerLengt
         APIKEY_STRING = APIKEY;
     } else {
         cout << "Error connecting to API" << endl;
+        return std::vector<float>(0);
     }
 
     std::string request_URL = "https://yahoo-finance15.p.rapidapi.com/api/v1/markets/stock/history?symbol=" + stockSymbol + "&interval=" + tickerLength + "&diffandsplits=false";
@@ -92,13 +93,14 @@ std::vector<float> callStockAPI(std::string stockSymbol, std::string tickerLengt
         curl_easy_cleanup(curl);
     } else {
         cout << "Failed to Initialize Curl_Init" << endl;
+        return std::vector<float>(0);
     }
 
     std::vector<float> prices;
 
     if (res != CURLE_OK) {
         cout << "Failed to recive a response from the API" << endl;
-        return;
+        return std::vector<float>(0);
     } else {
         json response_json = json::parse(response); 
         auto json_body = response_json["body"];
@@ -113,8 +115,53 @@ std::vector<float> callStockAPI(std::string stockSymbol, std::string tickerLengt
 }
 
 
-void printSignal (const Signal& s) {
-    cout << "--Strategy Signal-- [Thread: "<< s.thread_id << "] - [Type: " << (s.type == 0 ? "Buy" : "Sell") << "] - [Stock Amount: " << s.quantity << "] - [Day: " << s.days << "]" << endl;
+void printSignal (Signal& s) {
+    cout << "--Strategy Signal-- [Thread: "<< s.get_thread_id() << "] - [Type: " << (s.get_type() == 0 ? "Buy" : "Sell") << "] - [Stock Amount: " << s.get_quanity() << "] - [Tickers: " << s.get_tickers() << "]" << endl;
+}
+
+std::vector<float> userChooseData() {
+
+    cout << "Please choose a stock symbol to view" << endl;
+    std::string stockSymbol;
+    cin >> stockSymbol;
+
+
+    std::string tickerChoice;
+    std::string tickerLength;
+    std::vector<std::string> tickerSizes = {"5m","15m","30m","1h","1d","1wk","1mo","3mo"};
+    
+    while(true) {
+        cout << "Please choose a number corresponding to the respective ticker length:" << endl;
+        cout << "0 -> 5 minutes" << endl << "1 -> 15 minutes" << endl << "2 -> 30 minutes" << endl 
+                << "3 -> 1 hour" << endl << "4 -> 1 day" << endl << "5 -> 1 week" << endl 
+                << "6 -> 1 month" << endl << "7 -> 3 months" << endl;
+
+        cin >> tickerChoice;
+        int tickerNumberChoice = std::stoi(tickerChoice);
+        if (tickerNumberChoice >= 8 ||  tickerNumberChoice < 0) {
+            cout << "Please choose a number between 0 - 7" << endl;
+        } else {
+            tickerLength = tickerSizes[tickerNumberChoice];
+            break;
+        }
+    }
+
+    std::vector<float> prices = callStockAPI(stockSymbol, tickerLength);
+
+    if (prices.size() < 1) {
+        cout << "Stock Symbol not supported" << '\n' << "Please choose another stock symbol" << endl;
+        while (true) {
+            stockSymbol = "";
+            cin >> stockSymbol;
+            prices = callStockAPI(stockSymbol, tickerLength);
+
+            if (prices.size() > 1) {
+                break;
+            }
+        }
+    }
+
+    return prices;
 }
 
 
@@ -124,24 +171,16 @@ std::mutex signalMutex;
 
 int main(int argc, char** argv) {
 
-    cout << "Trading Bot" << endl;
-    string priceData = argv[1];
+    cout << "Trading Strategy Analysis Project" << endl << endl;
+    
 
-    vector<float> prices = parseData(priceData);
-    std::reverse(prices.begin(), prices.end());
+    std::vector<float> prices = userChooseData();
 
-
-    std::string stockSymbol = "AAPL";
-    std::string tickerLength = "5m";
-
-    callStockAPI(stockSymbol, tickerLength);
-
-    /*
+    
     bool eventLoop = true;
 
     
-    std::thread smaThread1(SMA, 0, 10000.0, 25, 150, prices);
-    std::thread smaThread2(SMA, 1, 10000.0, 25, 200, prices);
+    std::thread smaThread1(SMA, 0, 10000.0, 25, 50, prices);
 
     while (eventLoop) {
         
@@ -151,12 +190,11 @@ int main(int argc, char** argv) {
             Signal nextSignal = signalQueue.front();
             signalQueue.pop();
 
-            if (nextSignal.type == 2) {
+            if (nextSignal.get_type() == 2) {
                 eventLoop = false;
-                cout << "--[End]--" << endl;
-            } else if (nextSignal.type == 0) {
+            } else if (nextSignal.get_type() == 0) {
                 printSignal(nextSignal);
-            } else if (nextSignal.type == 1) {
+            } else if (nextSignal.get_type() == 1) {
                 printSignal(nextSignal);
             }
             signalMutex.unlock();
@@ -166,8 +204,6 @@ int main(int argc, char** argv) {
     
 
     smaThread1.join();
-    smaThread2.join();
-    */
     
     return 0;
 }
