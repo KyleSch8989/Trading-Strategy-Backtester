@@ -1,3 +1,6 @@
 .env
 gitlab.csv
 output.json
+.venv
+.vscode
+grpc

@@ -52,11 +52,13 @@ std::vector<float> SMA (int thread_id, float capital, int movingAvgShort, int mo
         }
     }
 
+    //send final sell order
+    std::lock_guard<std::mutex> lock(signalMutex);
     Signal lastBuySignal(thread_id, 0, prices.size(), capital/prices[prices.size() - 1]);
+
 
     //send signal once finished
     Signal endSignal(thread_id, 2, 0, 0);
-    std::lock_guard<std::mutex> lock(signalMutex);
     signalQueue.push(endSignal);
 
     return signal;
