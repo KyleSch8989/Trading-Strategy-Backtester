@@ -8,9 +8,13 @@
 #include <algorithm>
 #include <mutex>
 #include "signal.h"
+#include "strategies.h"
 #include <thread>
 #include <curl/curl.h>
 #include <nlohmann/json.hpp>
+#include <grpcpp/grpcpp.h>
+#include "protos/service.grpc.pb.h"
+#include "protos/service.pb.h"
 
 
 #include "strategies.h"

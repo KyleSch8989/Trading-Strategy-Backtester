@@ -1,0 +1,2 @@
+/usr/bin/ar qc libprotolib.a CMakeFiles/protolib.dir/protos/service.pb.cc.o CMakeFiles/protolib.dir/protos/service.grpc.pb.cc.o
+/usr/bin/ranlib libprotolib.a

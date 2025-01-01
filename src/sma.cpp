@@ -2,6 +2,7 @@
 #include <queue>
 #include <mutex>
 #include "signal.h"
+#include "strategies.h"
 #include <iostream>
 #include <chrono>
 
