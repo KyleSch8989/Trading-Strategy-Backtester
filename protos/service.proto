@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+
+
 service BacktesterGui {
     rpc SMA_Call (SMARequest) returns (SMAReply) {}
 }
