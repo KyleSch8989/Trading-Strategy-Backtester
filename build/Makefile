@@ -155,6 +155,19 @@ sma/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sma.dir/build.make CMakeFiles/sma.dir/build
 .PHONY : sma/fast
 
+#=============================================================================
+# Target rules for targets named proto_py
+
+# Build rule for target.
+proto_py: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 proto_py
+.PHONY : proto_py
+
+# fast build rule for target.
+proto_py/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/proto_py.dir/build.make CMakeFiles/proto_py.dir/build
+.PHONY : proto_py/fast
+
 protos/service.grpc.pb.o: protos/service.grpc.pb.cc.o
 .PHONY : protos/service.grpc.pb.o
 
@@ -265,6 +278,7 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
+	@echo "... proto_py"
 	@echo "... backtester_server"
 	@echo "... protolib"
 	@echo "... sma"

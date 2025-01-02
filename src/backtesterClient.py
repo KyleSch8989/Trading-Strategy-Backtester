@@ -1,5 +1,6 @@
 import streamlit as st
 
+
 col1, col2, col3 = st.columns([0.2, 0.2, 0.6], border=True)
 
 with col1:

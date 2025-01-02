@@ -11,3 +11,17 @@ RUN mkdir -p /deps/grpc/build && cd /deps/grpc/build && \
       -DgRPC_BUILD_TESTS=OFF \
       .. && \
       make -j8 install
+
+
+RUN apt install libcurl4-openssl-dev
+
+RUN apt install nlohmann-json3-dev
+
+RUN apt install python3
+RUN apt install python3-pip
+
+RUN pip install --break-system-pack streamlit
+RUN pip install --break-system-pack grpcio
+RUN pip install --break-system-pack grpcio-tools
+
+

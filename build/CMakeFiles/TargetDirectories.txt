@@ -1,5 +1,6 @@
 /root/project/Trading-Strategy-Backtester/build/CMakeFiles/protolib.dir
 /root/project/Trading-Strategy-Backtester/build/CMakeFiles/backtester_server.dir
 /root/project/Trading-Strategy-Backtester/build/CMakeFiles/sma.dir
+/root/project/Trading-Strategy-Backtester/build/CMakeFiles/proto_py.dir
 /root/project/Trading-Strategy-Backtester/build/CMakeFiles/edit_cache.dir
 /root/project/Trading-Strategy-Backtester/build/CMakeFiles/rebuild_cache.dir

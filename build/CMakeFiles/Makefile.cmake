@@ -163,4 +163,5 @@ set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/protolib.dir/DependInfo.cmake"
   "CMakeFiles/backtester_server.dir/DependInfo.cmake"
   "CMakeFiles/sma.dir/DependInfo.cmake"
+  "CMakeFiles/proto_py.dir/DependInfo.cmake"
   )
