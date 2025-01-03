@@ -6,9 +6,9 @@
 #include <iostream>
 #include <chrono>
 
-std::vector<float> SMA (int thread_id, float capital, int movingAvgShort, int movingAvgLong, const std::vector<float>& prices) {
-    std::mutex signalMutex;
-    std::vector<float> signal = {0.0, 5.0, 100.0}; // {buy/sell (0.0, 1.0), timeOfSingal (tickers since start), quantity of stock}
+std::queue<Signal> SMA (int thread_id, float capital, int movingAvgShort, int movingAvgLong, const std::vector<float>& prices) {
+    //std::mutex signalMutex;
+    std::queue<Signal> signalQueue;
 
     float shortAvg = 0.0;
     float longAvg = 0.0;
@@ -36,9 +36,9 @@ std::vector<float> SMA (int thread_id, float capital, int movingAvgShort, int mo
             //send Sell signal
             Signal sellSignal(thread_id, 1, i, capital/prices[i]);
             
-            signalMutex.lock();
+            //signalMutex.lock();
             signalQueue.push(sellSignal);
-            signalMutex.unlock();
+            //signalMutex.unlock();
         } else if ((!firstBuy) && shortGTlong && (longAvg > shortAvg)) {
             shortGTlong = false;
         } else if (!shortGTlong && (shortAvg > longAvg)) { //Short avg crosses long avg ## BUY
@@ -47,20 +47,20 @@ std::vector<float> SMA (int thread_id, float capital, int movingAvgShort, int mo
             //send Buy signal
             Signal buySignal(thread_id, 0, i, capital/prices[i]);
 
-            signalMutex.lock();
+           // signalMutex.lock();
             signalQueue.push(buySignal);
-            signalMutex.unlock();
+            //signalMutex.unlock();
         }
     }
 
     //send final sell order
-    std::lock_guard<std::mutex> lock(signalMutex);
+    //std::lock_guard<std::mutex> lock(signalMutex);
     Signal lastBuySignal(thread_id, 0, prices.size(), capital/prices[prices.size() - 1]);
-
+    signalQueue.push(lastBuySignal);
 
     //send signal once finished
     Signal endSignal(thread_id, 2, 0, 0);
     signalQueue.push(endSignal);
 
-    return signal;
+    return signalQueue;
 }

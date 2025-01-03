@@ -17,8 +17,8 @@ RUN apt install libcurl4-openssl-dev
 
 RUN apt install nlohmann-json3-dev
 
-RUN apt install python3
-RUN apt install python3-pip
+RUN apt install -y python3
+RUN apt install -y python3-pip
 
 RUN pip install --break-system-pack streamlit
 RUN pip install --break-system-pack grpcio

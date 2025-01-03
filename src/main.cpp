@@ -21,6 +21,10 @@
 using namespace std;
 using json = nlohmann::json;
 
+std::vector<float> userChooseData();
+//std::queue<Signal> signalQueue;
+std::mutex signalMutex;
+
 
 size_t cb(void* contents, size_t size, size_t nmemb, std::string responseData) {
     size_t totalSize = size * nmemb;
@@ -89,7 +93,111 @@ void printSignal (Signal& s) {
     cout << "--Strategy Signal-- [Thread: "<< s.get_thread_id() << "] - [Type: " << (s.get_type() == 0 ? "Buy" : "Sell") << "] - [Stock Amount: " << s.get_quanity() << "] - [Tickers: " << s.get_tickers() << "]" << endl;
 }
 
-std::vector<float> userChooseData() {
+std::pair<float, float> determineProfit(const std::queue<Signal>& strategySignals, int capital) {
+
+    return std::pair<float, float>(1.0f, 1.0f);
+}
+
+
+
+class BacktesterGuiImpl final : public BacktesterGui::Service {
+    public:
+        ::grpc::Status SMA_Call(grpc::ServerContext* context, const SMARequest* request, 
+                              SMAReply* response) {
+
+            auto stockSymbol = request->stocksymbol();
+            auto tickerLength = request->tickersize();
+            auto SMA_short = request->smashort();
+            auto SMA_long = request->smalong();
+            auto capital = request->capital();
+
+            const std::vector<float> stock_prices = callStockAPI(stockSymbol, tickerLength);
+            const std::queue<Signal> strategySignals = SMA(0, static_cast<float>(capital), SMA_short, SMA_long, stock_prices);
+            const std::pair<float, float> profit = determineProfit(strategySignals, capital);
+
+            response->set_dollar_profit(profit.first); /*  <====  0 placeholder value*/
+            
+            response->set_percent_profit(profit.second); /*  <====  0 placeholder value*/
+            
+            auto* prices_field = response->mutable_prices();
+            prices_field->Add(stock_prices.begin(), stock_prices.end()); /* v represents a placeholder for a std::vector type */
+            
+            //auto* signals_field = repsonse.mutable_signals()
+            //signals_field->Assign(v.begin(), v.end());
+
+
+            return grpc::Status::OK;
+        }
+};
+
+void RunServer() {
+    std::string server_address("0.0.0.0:50051");
+    BacktesterGuiImpl service;
+
+    grpc::ServerBuilder builder;
+    builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
+    builder.RegisterService(&service);
+    std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
+    std::cout << "Server Listening On: " << server_address << endl;
+    server->Wait();
+}
+
+
+
+
+
+int main(int argc, char** argv) {
+
+    cout << "Trading Strategy Analysis Project" << endl << endl;
+    
+
+    RunServer();
+    
+    return 0;
+}
+
+
+/*
+
+std::vector<float> prices = userChooseData();
+
+    
+    bool eventLoop = true;
+
+    
+    std::thread smaThread1(SMA, 0, 10000.0, 25, 50, prices);
+
+    while (eventLoop) {
+        
+
+        while (!signalQueue.empty()) {
+            signalMutex.lock();
+            Signal nextSignal = signalQueue.front();
+            signalQueue.pop();
+
+            if (nextSignal.get_type() == 2) {
+                eventLoop = false;
+            } else if (nextSignal.get_type() == 0) {
+                printSignal(nextSignal);
+            } else if (nextSignal.get_type() == 1) {
+                printSignal(nextSignal);
+            }
+            signalMutex.unlock();
+
+        }
+    }
+    
+
+    smaThread1.join();
+*/
+
+
+
+
+
+
+/*
+std::vector<float> userChooseData() {   //for terminal based application(no longer available)
 
     cout << "Please choose a stock symbol to view" << endl;
     std::string stockSymbol;
@@ -134,46 +242,4 @@ std::vector<float> userChooseData() {
     return prices;
 }
 
-
-
-std::queue<Signal> signalQueue;
-std::mutex signalMutex;
-
-int main(int argc, char** argv) {
-
-    cout << "Trading Strategy Analysis Project" << endl << endl;
-    
-
-    std::vector<float> prices = userChooseData();
-
-    
-    bool eventLoop = true;
-
-    
-    std::thread smaThread1(SMA, 0, 10000.0, 25, 50, prices);
-
-    while (eventLoop) {
-        
-
-        while (!signalQueue.empty()) {
-            signalMutex.lock();
-            Signal nextSignal = signalQueue.front();
-            signalQueue.pop();
-
-            if (nextSignal.get_type() == 2) {
-                eventLoop = false;
-            } else if (nextSignal.get_type() == 0) {
-                printSignal(nextSignal);
-            } else if (nextSignal.get_type() == 1) {
-                printSignal(nextSignal);
-            }
-            signalMutex.unlock();
-
-        }
-    }
-    
-
-    smaThread1.join();
-    
-    return 0;
-}
+*/

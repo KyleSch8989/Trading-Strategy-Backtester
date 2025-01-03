@@ -38,7 +38,7 @@ class Signal {
         }
 };
 
-extern std::queue<Signal> signalQueue;
+//extern std::queue<Signal> signalQueue;
 extern std::mutex signalMutex;
 
 #endif

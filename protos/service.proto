@@ -7,12 +7,21 @@ service BacktesterGui {
 }
 
 message SMARequest {
-    optional string StockSymbol = 1;
-    int32 tickerSize = 2;
+    string StockSymbol = 1;
+    string tickerSize = 2;
     int32 SMAShort = 3;
     int32 SMALong = 4;
+    int32 capital = 5;
 }
 
 message SMAReply {
-    int32 num = 1;
+    message SignalMessage {
+        int32 type = 1;
+        int32 timeSinceStart = 2;
+        float quantity = 3;
+    }
+    float dollar_profit = 1;
+    float percent_profit = 2;
+    repeated float prices = 3;
+    repeated SignalMessage signals = 4;
 }

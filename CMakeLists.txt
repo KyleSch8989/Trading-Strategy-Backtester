@@ -37,7 +37,7 @@ target_link_libraries(sma
 )
 
 set(PROTO_DIR ${CMAKE_SOURCE_DIR}/protos)
-set(GENERATED_PYTHON_DIR ${CMAKE_CURRENT_BINARY_DIR}/protos)
+set(GENERATED_PYTHON_DIR ${CMAKE_SOURCE_DIR}/src)
 
 add_custom_command(
     OUTPUT ${GENERATED_PYTHON_DIR}/service_pb2.py ${GENERATED_PYTHON_DIR}/service_pb2_grpc.py
