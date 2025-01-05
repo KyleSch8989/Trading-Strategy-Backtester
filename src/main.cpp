@@ -95,7 +95,7 @@ void printSignal (Signal& s) {
 }
 
 std::pair<float, float> determineProfit(const std::queue<Signal>& strategySignals, int capital) {
-
+    
     return std::pair<float, float>(2.0f, 1.0f);
 }
 
@@ -114,8 +114,6 @@ class BacktesterGuiImpl final : public BacktesterGui::Service {
             cout << "symbol: " << stockSymbol << " tickersize: " << tickerLength << " smashort: " << SMA_short << " smalong: " << SMA_long << " capital: " << capital << endl;
             
             const std::vector<float> stock_prices = callStockAPI(stockSymbol, tickerLength);
-            
-
             std::queue<Signal> strategySignals = SMA(0, static_cast<float>(capital), SMA_short, SMA_long, stock_prices);
             const std::pair<float, float> profit = determineProfit(strategySignals, capital);
 
@@ -133,7 +131,7 @@ class BacktesterGuiImpl final : public BacktesterGui::Service {
                 signal_field->set_quantity(s.get_quantity());
             }
 
-
+            cout << "Request handled and response sent!" << endl << endl;
             return grpc::Status::OK;
         }
 };
@@ -158,7 +156,6 @@ int main(int argc, char** argv) {
 
     cout << "Trading Strategy Analysis Project" << endl << endl;
     
-
     RunServer();
     
     return 0;

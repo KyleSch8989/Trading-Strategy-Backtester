@@ -23,5 +23,6 @@ RUN apt install -y python3-pip
 RUN pip install --break-system-pack streamlit
 RUN pip install --break-system-pack grpcio
 RUN pip install --break-system-pack grpcio-tools
+RUN pip install --break-system-pack matplotlib
 
 
