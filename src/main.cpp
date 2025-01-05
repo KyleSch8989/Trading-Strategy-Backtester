@@ -33,6 +33,7 @@ size_t cb(void* contents, size_t size, size_t nmemb, std::string responseData) {
 }
 
 std::vector<float> callStockAPI(std::string stockSymbol, std::string tickerLength) {
+    std::cout << "calling stock api" << endl;
     CURL* curl = curl_easy_init();
     CURLcode res;
     std::string response;
@@ -90,12 +91,12 @@ std::vector<float> callStockAPI(std::string stockSymbol, std::string tickerLengt
 
 
 void printSignal (Signal& s) {
-    cout << "--Strategy Signal-- [Thread: "<< s.get_thread_id() << "] - [Type: " << (s.get_type() == 0 ? "Buy" : "Sell") << "] - [Stock Amount: " << s.get_quanity() << "] - [Tickers: " << s.get_tickers() << "]" << endl;
+    cout << "--Strategy Signal-- [Thread: "<< s.get_thread_id() << "] - [Type: " << (s.get_type() == 0 ? "Buy" : "Sell") << "] - [Stock Amount: " << s.get_quantity() << "] - [Tickers: " << s.get_tickers() << "]" << endl;
 }
 
 std::pair<float, float> determineProfit(const std::queue<Signal>& strategySignals, int capital) {
 
-    return std::pair<float, float>(1.0f, 1.0f);
+    return std::pair<float, float>(2.0f, 1.0f);
 }
 
 
@@ -104,26 +105,33 @@ class BacktesterGuiImpl final : public BacktesterGui::Service {
     public:
         ::grpc::Status SMA_Call(grpc::ServerContext* context, const SMARequest* request, 
                               SMAReply* response) {
-
+            cout << "handling request and response" << endl;
             auto stockSymbol = request->stocksymbol();
             auto tickerLength = request->tickersize();
             auto SMA_short = request->smashort();
             auto SMA_long = request->smalong();
             auto capital = request->capital();
-
+            cout << "symbol: " << stockSymbol << " tickersize: " << tickerLength << " smashort: " << SMA_short << " smalong: " << SMA_long << " capital: " << capital << endl;
+            
             const std::vector<float> stock_prices = callStockAPI(stockSymbol, tickerLength);
-            const std::queue<Signal> strategySignals = SMA(0, static_cast<float>(capital), SMA_short, SMA_long, stock_prices);
+            
+
+            std::queue<Signal> strategySignals = SMA(0, static_cast<float>(capital), SMA_short, SMA_long, stock_prices);
             const std::pair<float, float> profit = determineProfit(strategySignals, capital);
 
-            response->set_dollar_profit(profit.first); /*  <====  0 placeholder value*/
-            
-            response->set_percent_profit(profit.second); /*  <====  0 placeholder value*/
-            
+            response->set_dollar_profit(profit.first); 
+            response->set_percent_profit(profit.second); 
+
             auto* prices_field = response->mutable_prices();
-            prices_field->Add(stock_prices.begin(), stock_prices.end()); /* v represents a placeholder for a std::vector type */
+            prices_field->Add(stock_prices.begin(), stock_prices.end()); 
             
-            //auto* signals_field = repsonse.mutable_signals()
-            //signals_field->Assign(v.begin(), v.end());
+            for (; !strategySignals.empty(); strategySignals.pop()) {
+                Signal s = strategySignals.front();
+                auto signal_field = response->add_signals();
+                signal_field->set_type(s.get_type());
+                signal_field->set_timesincestart(s.get_tickers());
+                signal_field->set_quantity(s.get_quantity());
+            }
 
 
             return grpc::Status::OK;

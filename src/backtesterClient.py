@@ -5,7 +5,7 @@ import service_pb2
 import service_pb2_grpc
 
 st.set_page_config(layout="wide")
-tickerMap = {"5m" : 0, "15m" : 1, "30m" : 2, "1h" : 3, "1d" : 4, "1wk" : 5, "1mo" : 6, "3mo" : 7}
+
 
 
 col1, col2, col3 = st.columns([0.2, 0.2, 0.6], border=True)
@@ -25,16 +25,16 @@ with col2:
         smaShort = form.slider("SMA short average", value=10)
         smaLong = form.slider("SMA short average", value=30)
 
-        capital = form.number_input("Initial Investment", min_value=1)
+        userCapital = form.number_input("Initial Investment", min_value=1)
         
         if form.form_submit_button("Submit"):
-            st.write("Stock Symbol is: ", stockSymbol, "Ticker Size is: ", tickerTime, "SMA Short and Long: ", smaShort, ", ", smaLong)
+            st.write("Stock Symbol is: ", stockSymbol, "Ticker Size is: ", tickerTime, "SMA Short and Long: ", smaShort, ", ", smaLong, "user capital: ", userCapital)
             channel = grpc.insecure_channel('localhost:50051')
             stub = service_pb2_grpc.BacktesterGuiStub(channel)
             feature = None
             try:
-                feature = stub.SMA_Call(service_pb2.SMARequest(StockSymbol=stockSymbol, tickerSize=tickerMap[tickerTime], SMAShort=smaShort, SMALong=smaLong))
+                feature = stub.SMA_Call(service_pb2.SMARequest(StockSymbol=stockSymbol, tickerSize=tickerTime, SMAShort=smaShort, SMALong=smaLong, capital=userCapital))
             except:
                 st.write("Could Not Connect to Server")
             if feature:
-                st.write(feature.dollar_profit)
+                st.write("request has been recived with a profit of: $", feature.dollar_profit)

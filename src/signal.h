@@ -33,7 +33,7 @@ class Signal {
             return tickers;
         }
 
-        float get_quanity() {
+        float get_quantity() {
             return quantity;
         }
 };

@@ -8,6 +8,7 @@
 
 std::queue<Signal> SMA (int thread_id, float capital, int movingAvgShort, int movingAvgLong, const std::vector<float>& prices) {
     //std::mutex signalMutex;
+    std::cout << "SMA step 0" << std::endl;
     std::queue<Signal> signalQueue;
 
     float shortAvg = 0.0;
@@ -15,7 +16,7 @@ std::queue<Signal> SMA (int thread_id, float capital, int movingAvgShort, int mo
 
     bool shortGTlong = true;
     bool firstBuy = false;  //first signal can't be a sell signal
-
+    std::cout << "SMA step 1" << std::endl;
 
     for (int i = 0; i < (int)prices.size(); i++) {
         shortAvg += prices[i];
@@ -53,14 +54,21 @@ std::queue<Signal> SMA (int thread_id, float capital, int movingAvgShort, int mo
         }
     }
 
+
+    for (float p : prices) {
+        std::cout << p << '\n';
+    }
+    std::cout << "SMA step 2" << std::endl;
     //send final sell order
     //std::lock_guard<std::mutex> lock(signalMutex);
-    Signal lastBuySignal(thread_id, 0, prices.size(), capital/prices[prices.size() - 1]);
+    std::cout << "prices size: " << static_cast<int>(prices.size()) << " size -1: " << static_cast<int>(prices.size()) - 1 << std::endl; 
+    Signal lastBuySignal(thread_id, 0, prices.size(), capital/(prices[static_cast<int>(prices.size()) - 1]));
+    std::cout << "SMA step 2.1" << std::endl;
     signalQueue.push(lastBuySignal);
-
+    std::cout << "SMA step 2.5" << std::endl;
     //send signal once finished
     Signal endSignal(thread_id, 2, 0, 0);
     signalQueue.push(endSignal);
-
+    std::cout << "SMA step 3" << std::endl;
     return signalQueue;
 }
