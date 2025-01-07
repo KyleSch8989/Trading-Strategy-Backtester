@@ -33,7 +33,7 @@ std::queue<Signal> SMA (int thread_id, float capital, int movingAvgShort, int mo
         if (firstBuy && shortGTlong && (longAvg > shortAvg)) {  //long avg crosses short avg ## SELL
             shortGTlong = false;
             //send Sell signal
-            Signal sellSignal(thread_id, 1, i, capital/prices[i]);
+            Signal sellSignal(thread_id, 1, i, capital/prices[i], prices[i]);
             
             //signalMutex.lock();
             signalQueue.push(sellSignal);
@@ -44,7 +44,7 @@ std::queue<Signal> SMA (int thread_id, float capital, int movingAvgShort, int mo
             shortGTlong = true;
             firstBuy = true;
             //send Buy signal
-            Signal buySignal(thread_id, 0, i, capital/prices[i]);
+            Signal buySignal(thread_id, 0, i, capital/prices[i], prices[i]);
 
            // signalMutex.lock();
             signalQueue.push(buySignal);
@@ -54,11 +54,11 @@ std::queue<Signal> SMA (int thread_id, float capital, int movingAvgShort, int mo
 
     //send final sell order
     //std::lock_guard<std::mutex> lock(signalMutex);
-    Signal lastBuySignal(thread_id, 0, prices.size(), capital/(prices[static_cast<int>(prices.size()) - 1]));
+    Signal lastBuySignal(thread_id, 0, prices.size(), capital/(prices[static_cast<int>(prices.size()) - 1]), prices[static_cast<int>(prices.size()) - 1]);
     signalQueue.push(lastBuySignal);
 
     //send signal once finished
-    Signal endSignal(thread_id, 2, 0, 0);
+    Signal endSignal(thread_id, 2, 0, 0, 0);
     signalQueue.push(endSignal);
     return signalQueue;
 }

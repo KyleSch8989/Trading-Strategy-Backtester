@@ -71,6 +71,8 @@ std::vector<float> callStockAPI(std::string stockSymbol, std::string tickerLengt
         return std::vector<float>(0);
     }
 
+    
+
     std::vector<float> prices;
 
     if (res != CURLE_OK) {
@@ -95,8 +97,16 @@ void printSignal (Signal& s) {
 }
 
 std::pair<float, float> determineProfit(const std::queue<Signal>& strategySignals, int capital) {
+    float dollar_profit;
+    float percent_profit;
+    std::queue<Signal> strategySignals_cpy = strategySignals;
     
-    return std::pair<float, float>(2.0f, 1.0f);
+    for (; !strategySignals_cpy.empty(); strategySignals_cpy.pop()) {
+        Signal s = strategySignals_cpy.front();
+        
+    }
+    cout << endl;
+    return std::pair<float, float>(0.3f, 0.4f);
 }
 
 
