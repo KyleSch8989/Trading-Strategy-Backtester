@@ -26,7 +26,8 @@ RUN pip install --break-system-pack grpcio-tools
 RUN pip install --break-system-pack matplotlib
 
 WORKDIR /
-RUN mkdir project && cd project
+RUN mkdir project
+WORKDIR /project
 RUN git clone https://github.com/KyleSch8989/Trading-Strategy-Backtester.git
 
 WORKDIR /project/Trading-Strategy-Backtester/
