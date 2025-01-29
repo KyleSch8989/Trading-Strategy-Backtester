@@ -78,5 +78,5 @@ with col3:
 
         st.pyplot(fig)
 
-        st.metric(label="Dollar Profit (USD)", value=st.session_state["SMA_Response"].dollar_profit)
-        st.metric(label="Percentage Profit", value=f"{st.session_state["SMA_Response"].percent_profit}%")
+        st.metric(label="Dollar Profit (USD)", value=f"{round(st.session_state["SMA_Response"].dollar_profit, 2)}$")
+        st.metric(label="Percentage Profit", value=f"{round(st.session_state["SMA_Response"].percent_profit, 2)}%")

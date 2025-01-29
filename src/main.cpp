@@ -33,7 +33,7 @@ size_t cb(void* contents, size_t size, size_t nmemb, std::string responseData) {
 }
 
 std::vector<float> callStockAPI(std::string stockSymbol, std::string tickerLength) {
-    std::cout << "calling stock api" << endl;
+    std::cout << "calling stock api on; stock: " << stockSymbol << ", ticker length: " << tickerLength << endl;
     CURL* curl = curl_easy_init();
     CURLcode res;
     std::string response;
@@ -88,6 +88,11 @@ std::vector<float> callStockAPI(std::string stockSymbol, std::string tickerLengt
         
     }
 
+    if (prices.size() == 0) {
+        cout << "API does not have any data for this stock symbol and ticker size" << endl;
+        return std::vector<float>(0);
+    }
+
     return prices;
 }
 
@@ -97,16 +102,23 @@ void printSignal (Signal& s) {
 }
 
 std::pair<float, float> determineProfit(const std::queue<Signal>& strategySignals, int capital) {
+    cout << "Determining Profit" << endl;
     float dollar_profit;
     float percent_profit;
     std::queue<Signal> strategySignals_cpy = strategySignals;
     
-    for (; !strategySignals_cpy.empty(); strategySignals_cpy.pop()) {
+    for (int i = 0; i < strategySignals_cpy.size() - 2; i++) {
         Signal s = strategySignals_cpy.front();
+        cout << "type: " << s.get_type() << ", quantity: " << s.get_quantity() << ", dollar amount: " << s.get_quantity() * s.get_price() << endl;
+        strategySignals_cpy.pop();
         
     }
-    cout << endl;
-    return std::pair<float, float>(0.3f, 0.4f);
+    
+    float final_capital = strategySignals_cpy.front().get_quantity() * strategySignals_cpy.front().get_price();
+    dollar_profit = (capital - final_capital) * -1;
+    percent_profit = ((final_capital - capital)/capital) * 100;
+    cout << "quantity: " << strategySignals_cpy.front().get_quantity() << ", dollar amount: " << final_capital << endl;
+    return std::pair<float, float>(dollar_profit, percent_profit);
 }
 
 
