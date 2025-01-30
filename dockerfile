@@ -1,5 +1,8 @@
 FROM ubuntu:latest
 
+EXPOSE 8501
+EXPOSE 8502
+
 RUN apt-get update && apt-get install -y cmake build-essential git
 
 WORKDIR /deps

@@ -27,7 +27,7 @@ with col2:
         tickerTime = form.selectbox("Ticker Size", ("5m","15m","30m","1h","1d","1wk","1mo","3mo"))
 
         smaShort = form.slider("SMA short average", value=10)
-        smaLong = form.slider("SMA short average", value=30)
+        smaLong = form.slider("SMA long average", value=30)
 
         userCapital = form.number_input("Initial Investment", min_value=1)
         
