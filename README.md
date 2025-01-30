@@ -23,6 +23,31 @@ This project is a stock trading strategy backtester designed to evaualte potenti
 - **Matplotlib:** For creating detailed stock charts.
 - **gRPC:** For inter-process communication between C++ backend and Python frontend.
 
+## Future Plans
+
+- **More Strategies:** To provide an initial demonstration of functionality, only one trading strategy was implemented (Simple-Moving-Average). However, throughout development, a modular architecture was maintained, facilitating straightforward extension of strategies in future updates.
+- **Mixed strategy implementation:** Provide a way for the user to divide available capital between multiple stratiegies/stocks.
+
+## Examples
+
+### Example 1: 
+- Nvidia
+- 15 minute ticker size
+- Simple-Moving-Average(17, 51)
+- 70000 USD initial capital
+
+![example_screenshot_nvidia](https://github.com/user-attachments/assets/8931c2c9-c7ec-4501-83c4-d4a429192334)
+
+### Example 2:
+- Apple
+- 5 minute ticker size
+- Simple-Moving-Average(10, 30)
+- 150000 USD initial capital
+
+![example_screenshot_apple](https://github.com/user-attachments/assets/0b95b107-1660-4344-a44d-ad15c1a9e528)
+
+
+
 ## Usage
 
 Please note that i have very limited experience using docker and therefore this whole process is very messy.
